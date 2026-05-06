@@ -30,7 +30,6 @@
             min-height: 100vh;
         }
 
-        /* Animated Grid Background */
         .bg-grid {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -55,7 +54,7 @@
 
         header {
             display: flex;
-            justify-content: space-between; /* Изменено или оставлено для корректного выравнивания лого */
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
         }
@@ -70,6 +69,32 @@
         }
 
         .logo span { background: var(--accent); color: var(--bg); padding: 0 8px; border-radius: 6px; margin-left: 4px; }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .user-profile-trigger:hover { background: var(--card-hover); border-color: var(--accent); }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg);
+            font-weight: 900;
+        }
 
         /* Main Grid */
         .main-grid {
@@ -105,12 +130,10 @@
             background: rgba(0,0,0,0.3);
         }
 
-        .drop-zone:hover { border-color: var(--accent); background: rgba(45, 216, 129, 0.05); }
-
         #preview-canvas {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             display: none;
             position: absolute;
             z-index: 1;
@@ -129,12 +152,7 @@
 
         @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
-        /* Side Panel */
-        .side-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
+        .side-panel { display: flex; flex-direction: column; gap: 25px; }
 
         .console-box {
             background: #000;
@@ -144,7 +162,7 @@
             font-size: 0.75rem;
             color: var(--accent);
             height: 180px;
-            overflow-y: hidden;
+            overflow-y: auto;
             border: 1px solid #111;
         }
 
@@ -171,7 +189,6 @@
 
         .status-label { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; }
 
-        /* Buttons */
         .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 20px; }
         
         .btn {
@@ -184,124 +201,59 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
         .btn-primary { background: var(--accent); color: var(--bg); box-shadow: 0 8px 25px var(--accent-glow); }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
-        
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
         .btn-secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.05); }
 
-        /* Upgrade Section */
         .upgrade-header {
             text-align: center;
             margin: 60px 0 30px 0;
             font-size: 2rem;
             font-weight: 900;
-            letter-spacing: 1px;
             color: #fff;
         }
-        
         .upgrade-header span { color: var(--accent); }
 
-        .tier-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
+        .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .tier-card {
             background: var(--card);
             padding: 40px 30px;
             border-radius: var(--br);
             border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            transition: 0.3s;
         }
-
         .tier-card.premium { border-color: var(--accent); position: relative; overflow: hidden; }
-        .tier-card.premium::before {
-            content: 'BEST VALUE';
-            position: absolute;
-            top: 20px; right: -30px;
-            background: var(--accent);
-            color: var(--bg);
-            font-size: 0.7rem;
-            font-weight: 900;
-            padding: 5px 30px;
-            transform: rotate(45deg);
-        }
 
-        /* Modal */
+        /* Modal Layout */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s ease;
         }
-
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
         .modal-content {
             background: var(--bg);
             border: 1px solid var(--border);
-            width: 100%;
-            max-width: 450px;
-            border-radius: 24px;
-            padding: 40px;
-            position: relative;
-            transform: translateY(20px);
-            transition: 0.3s ease;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+            width: 100%; max-width: 450px;
+            border-radius: 24px; padding: 40px; position: relative;
         }
 
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-
-        .close-btn {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: transparent;
-            border: none;
-            color: #666;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .close-btn:hover { color: #fff; }
-
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
-        .input-group input {
-            width: 100%; padding: 15px; border-radius: 12px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #fff; font-family: 'Outfit'; font-size: 1rem; transition: 0.3s;
-        }
-        .input-group input:focus { outline: none; border-color: var(--accent); background: rgba(45, 216, 129, 0.05); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-val { display: block; font-size: 1.5rem; font-weight: 900; color: var(--accent); }
+        .stat-lbl { font-size: 0.7rem; color: #666; text-transform: uppercase; }
 
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* Mobile Adaptation */
         @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
-            .side-panel { flex-direction: column; } /* Изменено: Результат будет сверху, консоль снизу */
-            .drop-zone { height: 320px; }
-            .analyzer-panel { padding: 20px; }
-            .big-score { font-size: 5rem; }
-            .btn-group { grid-template-columns: 1fr; }
-            .upgrade-header { font-size: 1.5rem; }
-            .modal-content { padding: 30px 20px; margin: 20px; }
+            .side-panel { flex-direction: column-reverse; }
         }
     </style>
 </head>
@@ -312,18 +264,20 @@
 <div class="container">
     <header>
         <div class="logo">MOGG<span>HUB</span></div>
-        <!-- Надпись версии удалена -->
+        <div class="user-profile-trigger" onclick="openProfile()">
+            <div class="user-avatar">U</div>
+            <span style="font-weight: 700; font-size: 0.9rem;">GUEST_USER</span>
+        </div>
     </header>
 
     <main class="main-grid">
-        <!-- Scanner -->
         <section class="analyzer-panel">
             <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
                 <div class="scanner-line" id="scanner"></div>
                 <div id="drop-content" style="text-align: center; z-index: 2; transition: 0.5s;">
                     <i class="fa-solid fa-camera" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
                     <h2 style="font-weight: 900; margin-bottom: 5px;">UPLOAD PHOTO</h2>
-                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Tap to select image</p>
+                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Frontal view required</p>
                 </div>
                 <canvas id="preview-canvas"></canvas>
                 <input type="file" id="fileInput" hidden accept="image/*">
@@ -339,13 +293,11 @@
             </div>
         </section>
 
-        <!-- Stats & Console -->
         <aside class="side-panel">
             <div class="result-display" id="resultCard">
                 <p style="text-transform: uppercase; font-size: 0.8rem; color: #888; font-weight: 700;">Final Score</p>
                 <div class="big-score" id="scoreValue">0.0</div>
                 <div class="status-label" id="statusLabel">---</div>
-                
                 <div style="width: 100%; height: 6px; background: #111; margin: 20px 0; border-radius: 10px; overflow: hidden;">
                     <div id="scoreBar" style="height: 100%; width: 0%; background: var(--accent); transition: 1s cubic-bezier(0.22, 1, 0.36, 1);"></div>
                 </div>
@@ -353,55 +305,47 @@
 
             <div class="console-box" id="console">
                 <div class="log-entry" style="color: #666;">> System online...</div>
-                <div class="log-entry" style="color: #666;">> Waiting for image input...</div>
+                <div class="log-entry" style="color: #666;">> Face detection module active.</div>
             </div>
         </aside>
     </main>
 
-    <!-- Upgrade Section -->
     <h2 class="upgrade-header">UPGRADE TO MOGGHUB<span>+</span></h2>
     <div class="tier-grid">
         <div class="tier-card">
             <h3 style="color: #fff; margin-bottom: 10px; font-weight: 900;">PRO</h3>
-            <div style="font-size: 2.5rem; font-weight: 900; margin-bottom: 5px;">$9<span style="font-size: 1rem; color: #666;">.99</span></div>
-            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px;">PDF Report + Symmetry Analysis</p>
-            <button class="btn btn-secondary" style="width: 100%;" onclick="openModal('PRO TIER')">Select Pro</button>
+            <div style="font-size: 2.5rem; font-weight: 900;">$9.99</div>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 25px;">Detailed facial symmetry report</p>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="openPayment('PRO')">Select Pro</button>
         </div>
         <div class="tier-card premium">
             <h3 style="color: var(--accent); margin-bottom: 10px; font-weight: 900;">ELITE</h3>
-            <div style="font-size: 2.5rem; font-weight: 900; margin-bottom: 5px;">$19<span style="font-size: 1rem; color: #666;">.99</span></div>
-            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px;">Deep Scan + Anonymous Mode</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="openModal('ELITE TIER')">Join Elite</button>
+            <div style="font-size: 2.5rem; font-weight: 900;">$19.99</div>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 25px;">Full body & facial harmony scan</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="openPayment('ELITE')">Join Elite</button>
         </div>
     </div>
 </div>
 
-<!-- Checkout Modal -->
+<!-- Profile Modal -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+        <button class="btn-secondary" style="position:absolute; top:20px; right:20px; padding:5px 10px;" onclick="closeModals()">X</button>
+        <h2 style="font-weight: 900;">USER PROFILE</h2>
+        <div class="stats-grid">
+            <div class="stat-item"><span class="stat-val" id="stat-scans">0</span><span class="stat-lbl">Total Scans</span></div>
+            <div class="stat-item"><span class="stat-val" id="stat-avg">0.0</span><span class="stat-lbl">Avg Score</span></div>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.8rem; color: #666; text-align: center;">Account Status: <span style="color:var(--accent)">Free Tier</span></p>
+    </div>
+</div>
+
+<!-- Payment Modal (Placeholder) -->
 <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
-        <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-        <h2 style="font-weight: 900; margin-bottom: 5px; font-size: 1.8rem;">SECURE CHECKOUT</h2>
-        <p style="color: #888; font-size: 0.9rem; margin-bottom: 30px;" id="modalPlanName">Selected Plan: --</p>
-
-        <div class="input-group">
-            <label>Card Number</label>
-            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="input-group">
-                <label>Expiry</label>
-                <input type="text" placeholder="MM/YY" maxlength="5">
-            </div>
-            <div class="input-group">
-                <label>CVC</label>
-                <input type="password" placeholder="***" maxlength="3">
-            </div>
-        </div>
-        
-        <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="processPayment()">
-            <i class="fa-solid fa-lock"></i> PAY NOW
-        </button>
-        <p style="text-align: center; font-size: 0.7rem; color: #555; margin-top: 15px; font-family: 'JetBrains Mono';">Encrypted via Stripe 256-bit SSL</p>
+        <h2 style="font-weight: 900;">SECURE CHECKOUT</h2>
+        <p id="planText" style="color: #888; margin-bottom: 20px;"></p>
+        <button class="btn btn-primary" style="width: 100%;" onclick="closeModals()">MOCK PAYMENT CLOSE</button>
     </div>
 </div>
 
@@ -409,13 +353,13 @@
     const fileInput = document.getElementById('fileInput');
     const canvas = document.getElementById('preview-canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const dropContent = document.getElementById('drop-content');
     const scanBtn = document.getElementById('scanBtn');
     const scanner = document.getElementById('scanner');
     const consoleBox = document.getElementById('console');
     const resultCard = document.getElementById('resultCard');
     
     let rawImageData = null;
+    let stats = JSON.parse(localStorage.getItem('mogghub_stats')) || { scans: 0, totalScore: 0 };
 
     function addLog(text, color = "var(--accent)") {
         const entry = document.createElement('div');
@@ -425,27 +369,23 @@
         consoleBox.scrollTop = consoleBox.scrollHeight;
     }
 
-    fileInput.onchange = (e) => handleFile(e.target.files[0]);
-
-    function handleFile(file) {
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
         if (!file) return;
-        addLog(`Image loaded: ${file.name}`);
-        
+        addLog(`Loading image...`);
         const img = new Image();
         img.onload = () => {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
-            
             canvas.style.display = 'block';
-            dropContent.style.opacity = '0';
+            document.getElementById('drop-content').style.opacity = '0';
             scanBtn.disabled = false;
-            
             rawImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            addLog("Pixel buffer ready.");
+            addLog("Ready for biometric analysis.");
         };
         img.src = URL.createObjectURL(file);
-    }
+    };
 
     scanBtn.onclick = async () => {
         scanBtn.disabled = true;
@@ -453,84 +393,58 @@
         scanner.style.display = 'block';
         scanner.style.animation = 'scanMove 1.5s infinite linear';
         
-        const phases = [
-            "Extracting facial landmarks...",
-            "Analyzing jawline geometry...",
-            "Evaluating lighting & contrast...",
-            "Cross-referencing database..."
-        ];
+        const steps = ["Validating human features...", "Mapping geometry...", "Running DeepScan v4..."];
+        for(let s of steps) { addLog(s); await new Promise(r => setTimeout(r, 700)); }
 
-        for (let phase of phases) {
-            addLog(phase);
-            await new Promise(r => setTimeout(r, 600));
-        }
-
-        executeAdvancedAnalysis();
+        runAnalysis();
     };
 
-    function executeAdvancedAnalysis() {
-        if (!rawImageData) return;
-
+    function runAnalysis() {
         const data = rawImageData.data;
-        const width = canvas.width;
-        let edgeScore = 0;
-        let brightnessScore = 0;
+        let detailLevel = 0;
+        let brightness = 0;
         let samples = 0;
 
-        // Обновленная ИИ-логика: оценивает резкость (границы) и среднее освещение
-        for (let i = 0; i < data.length; i += 32) { 
-            let x = (i / 4) % width;
-            if (x > 1 && x < width - 1 && i > width * 4) {
-                let r = data[i], g = data[i+1], b = data[i+2];
-                let currentBrightness = (r + g + b) / 3;
-                brightnessScore += currentBrightness;
-
-                let current = (r + g + b);
-                let left = (data[i-4] + data[i-3] + data[i-2]);
-                let top = (data[i - width*4] + data[i - width*4 + 1] + data[i - width*4 + 2]);
-                
-                let diff = Math.abs(current - left) + Math.abs(current - top);
-                edgeScore += diff;
-                samples++;
+        // Детекция деталей (краев)
+        for (let i = 0; i < data.length; i += 64) {
+            let r = data[i], g = data[i+1], b = data[i+2];
+            let lum = (r + g + b) / 3;
+            brightness += lum;
+            
+            if (i > canvas.width * 4) {
+                let prevLum = (data[i-4] + data[i-3] + data[i-2]) / 3;
+                detailLevel += Math.abs(lum - prevLum);
             }
+            samples++;
         }
 
-        let avgEdgeSharpness = edgeScore / samples;
-        let avgBrightness = brightnessScore / samples;
-        
-        // Более "добрая" и честная логика
-        let baseScore = 5.0; // Минимальная база теперь выше
-        
-        // Бонус за четкие контуры (до 3.5 баллов)
-        baseScore += Math.min(3.5, avgEdgeSharpness / 25); 
+        const avgDetail = detailLevel / samples;
+        const avgLum = brightness / samples;
 
-        // Бонус за хорошее освещение (если фото не слишком темное и не пересвечено)
-        if (avgBrightness > 70 && avgBrightness < 210) {
-            baseScore += 1.0;
-        } else {
-            baseScore += 0.4; // Утешительный балл за плохой свет
+        scanner.style.display = 'none';
+
+        // КРИТИЧЕСКАЯ ПРОВЕРКА: Если деталей мало (пустой фон) или свет экстремальный
+        if (avgDetail < 8 || avgLum < 15 || avgLum > 245) {
+            addLog("ERROR: HUMAN NOT DETECTED", "#ff4b4b");
+            alert("Face not detected. Please upload a clear photo of a person.");
+            scanBtn.disabled = false;
+            return;
         }
 
-        // Рандомизация для эффекта живой оценки, но она стала мягче
-        let variance = (Math.random() * 0.8) - 0.1; 
-        let finalScore = Math.min(9.9, Math.max(4.0, baseScore + variance)).toFixed(1);
-
-        displayResults(parseFloat(finalScore));
+        // Если проверка пройдена, считаем баллы
+        let score = 5.0 + (avgDetail / 10) + (Math.random() * 1.5);
+        score = Math.min(9.9, Math.max(4.2, score));
+        
+        showResults(score);
     }
 
-    function displayResults(score) {
-        scanner.style.display = 'none';
+    function showResults(score) {
         resultCard.style.display = 'block';
+        let status = "MTN"; let color = "#ffd151";
         
-        let status = "";
-        let color = "";
-
-        // Пороги статусов подогнаны под новые, более высокие средние оценки
-        if (score < 5.0) { status = "SUB-5"; color = "#ff4b4b"; }
-        else if (score < 6.8) { status = "MTN"; color = "#ffd151"; }
-        else if (score < 8.2) { status = "HTN"; color = "#7be495"; }
-        else if (score < 9.4) { status = "CHAD"; color = "#2dd881"; }
-        else { status = "MOGGHUNTER"; color = "#00ff7f"; }
+        if (score > 8.5) { status = "MOGGER"; color = "#00ff7f"; }
+        else if (score > 7.0) { status = "CHAD"; color = "#2dd881"; }
+        else if (score < 5.5) { status = "SUB-5"; color = "#ff4b4b"; }
 
         document.getElementById('scoreValue').innerText = score.toFixed(1);
         document.getElementById('scoreValue').style.color = color;
@@ -542,32 +456,27 @@
             document.getElementById('scoreBar').style.backgroundColor = color;
         }, 50);
 
-        addLog(`Result: ${status} (${score.toFixed(1)})`, color);
-
-        if(window.innerWidth <= 900) {
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        // Обновляем статистику профиля
+        stats.scans++;
+        stats.totalScore += score;
+        localStorage.setItem('mogghub_stats', JSON.stringify(stats));
+        addLog(`Analysis complete. Rank: ${status}`, color);
     }
 
-    // Modal Logic
-    const modal = document.getElementById('paymentModal');
-    function openModal(planName) {
-        document.getElementById('modalPlanName').innerText = `Selected Plan: ${planName}`;
-        modal.classList.add('active');
+    function openProfile() {
+        document.getElementById('stat-scans').innerText = stats.scans;
+        const avg = stats.scans > 0 ? (stats.totalScore / stats.scans).toFixed(1) : "0.0";
+        document.getElementById('stat-avg').innerText = avg;
+        document.getElementById('profileModal').classList.add('active');
     }
-    function closeModal() { modal.classList.remove('active'); }
-    function processPayment() {
-        const btn = document.querySelector('.modal-content .btn-primary');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...';
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> PAYMENT FAILED: MOCK UI';
-            btn.style.background = '#ff4b4b';
-            setTimeout(() => {
-                closeModal();
-                btn.innerHTML = '<i class="fa-solid fa-lock"></i> PAY NOW';
-                btn.style.background = 'var(--accent)';
-            }, 2000);
-        }, 1500);
+
+    function openPayment(plan) {
+        document.getElementById('planText').innerText = `Upgrading to ${plan} status...`;
+        document.getElementById('paymentModal').classList.add('active');
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
     }
 </script>
 
