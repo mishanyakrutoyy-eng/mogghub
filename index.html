@@ -55,7 +55,7 @@
 
         header {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Изменено или оставлено для корректного выравнивания лого */
             align-items: center;
             margin-bottom: 40px;
         }
@@ -70,7 +70,6 @@
         }
 
         .logo span { background: var(--accent); color: var(--bg); padding: 0 8px; border-radius: 6px; margin-left: 4px; }
-        .version { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
 
         /* Main Grid */
         .main-grid {
@@ -296,7 +295,7 @@
         /* Mobile Adaptation */
         @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
-            .side-panel { flex-direction: column-reverse; } /* Puts result card above console on mobile */
+            .side-panel { flex-direction: column; } /* Изменено: Результат будет сверху, консоль снизу */
             .drop-zone { height: 320px; }
             .analyzer-panel { padding: 20px; }
             .big-score { font-size: 5rem; }
@@ -313,7 +312,7 @@
 <div class="container">
     <header>
         <div class="logo">MOGG<span>HUB</span></div>
-        <div class="version">V4.0 // MOBILE_READY</div>
+        <!-- Надпись версии удалена -->
     </header>
 
     <main class="main-grid">
@@ -457,7 +456,7 @@
         const phases = [
             "Extracting facial landmarks...",
             "Analyzing jawline geometry...",
-            "Computing symmetry metrics...",
+            "Evaluating lighting & contrast...",
             "Cross-referencing database..."
         ];
 
@@ -475,14 +474,18 @@
         const data = rawImageData.data;
         const width = canvas.width;
         let edgeScore = 0;
+        let brightnessScore = 0;
         let samples = 0;
 
-        // Improved AI Logic: Evaluates vertical & horizontal pixel contrast (Edge detection proxy)
-        // High contrast/sharp lines result in a higher intrinsic image score.
+        // Обновленная ИИ-логика: оценивает резкость (границы) и среднее освещение
         for (let i = 0; i < data.length; i += 32) { 
             let x = (i / 4) % width;
             if (x > 1 && x < width - 1 && i > width * 4) {
-                let current = (data[i] + data[i+1] + data[i+2]);
+                let r = data[i], g = data[i+1], b = data[i+2];
+                let currentBrightness = (r + g + b) / 3;
+                brightnessScore += currentBrightness;
+
+                let current = (r + g + b);
                 let left = (data[i-4] + data[i-3] + data[i-2]);
                 let top = (data[i - width*4] + data[i - width*4 + 1] + data[i - width*4 + 2]);
                 
@@ -493,11 +496,24 @@
         }
 
         let avgEdgeSharpness = edgeScore / samples;
+        let avgBrightness = brightnessScore / samples;
         
-        // Map sharpness logic to a 3.0 - 9.9 scale
-        let baseScore = 3.5 + (avgEdgeSharpness / 30); 
-        let variance = (Math.random() * 1.2) - 0.2; // Add slight RNG for unpredictability
-        let finalScore = Math.min(9.9, Math.max(3.0, baseScore + variance)).toFixed(1);
+        // Более "добрая" и честная логика
+        let baseScore = 5.0; // Минимальная база теперь выше
+        
+        // Бонус за четкие контуры (до 3.5 баллов)
+        baseScore += Math.min(3.5, avgEdgeSharpness / 25); 
+
+        // Бонус за хорошее освещение (если фото не слишком темное и не пересвечено)
+        if (avgBrightness > 70 && avgBrightness < 210) {
+            baseScore += 1.0;
+        } else {
+            baseScore += 0.4; // Утешительный балл за плохой свет
+        }
+
+        // Рандомизация для эффекта живой оценки, но она стала мягче
+        let variance = (Math.random() * 0.8) - 0.1; 
+        let finalScore = Math.min(9.9, Math.max(4.0, baseScore + variance)).toFixed(1);
 
         displayResults(parseFloat(finalScore));
     }
@@ -509,11 +525,11 @@
         let status = "";
         let color = "";
 
-        // Simplified status labels without brackets
-        if (score < 4.5) { status = "SUB-5"; color = "#ff4b4b"; }
-        else if (score < 6.5) { status = "MTN"; color = "#ffd151"; }
-        else if (score < 8.0) { status = "HTN"; color = "#7be495"; }
-        else if (score < 9.3) { status = "CHAD"; color = "#2dd881"; }
+        // Пороги статусов подогнаны под новые, более высокие средние оценки
+        if (score < 5.0) { status = "SUB-5"; color = "#ff4b4b"; }
+        else if (score < 6.8) { status = "MTN"; color = "#ffd151"; }
+        else if (score < 8.2) { status = "HTN"; color = "#7be495"; }
+        else if (score < 9.4) { status = "CHAD"; color = "#2dd881"; }
         else { status = "MOGGHUNTER"; color = "#00ff7f"; }
 
         document.getElementById('scoreValue').innerText = score.toFixed(1);
@@ -528,7 +544,6 @@
 
         addLog(`Result: ${status} (${score.toFixed(1)})`, color);
 
-        // Mobile smooth scroll to result
         if(window.innerWidth <= 900) {
             resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
