@@ -30,7 +30,6 @@
             min-height: 100vh;
         }
 
-        /* Animated Grid Background */
         .bg-grid {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -55,7 +54,7 @@
 
         header {
             display: flex;
-            justify-content: space-between; /* Изменено или оставлено для корректного выравнивания лого */
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
         }
@@ -71,7 +70,6 @@
 
         .logo span { background: var(--accent); color: var(--bg); padding: 0 8px; border-radius: 6px; margin-left: 4px; }
 
-        /* Main Grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 380px;
@@ -129,7 +127,6 @@
 
         @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
-        /* Side Panel */
         .side-panel {
             display: flex;
             flex-direction: column;
@@ -171,7 +168,6 @@
 
         .status-label { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; }
 
-        /* Buttons */
         .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 20px; }
         
         .btn {
@@ -197,7 +193,6 @@
         .btn-secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); }
 
-        /* Upgrade Section */
         .upgrade-header {
             text-align: center;
             margin: 60px 0 30px 0;
@@ -237,7 +232,6 @@
             transform: rotate(45deg);
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -292,10 +286,9 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* Mobile Adaptation */
         @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
-            .side-panel { flex-direction: column; } /* Изменено: Результат будет сверху, консоль снизу */
+            .side-panel { flex-direction: column; }
             .drop-zone { height: 320px; }
             .analyzer-panel { padding: 20px; }
             .big-score { font-size: 5rem; }
@@ -312,11 +305,9 @@
 <div class="container">
     <header>
         <div class="logo">MOGG<span>HUB</span></div>
-        <!-- Надпись версии удалена -->
     </header>
 
     <main class="main-grid">
-        <!-- Scanner -->
         <section class="analyzer-panel">
             <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
                 <div class="scanner-line" id="scanner"></div>
@@ -339,7 +330,6 @@
             </div>
         </section>
 
-        <!-- Stats & Console -->
         <aside class="side-panel">
             <div class="result-display" id="resultCard">
                 <p style="text-transform: uppercase; font-size: 0.8rem; color: #888; font-weight: 700;">Final Score</p>
@@ -358,7 +348,6 @@
         </aside>
     </main>
 
-    <!-- Upgrade Section -->
     <h2 class="upgrade-header">UPGRADE TO MOGGHUB<span>+</span></h2>
     <div class="tier-grid">
         <div class="tier-card">
@@ -376,7 +365,6 @@
     </div>
 </div>
 
-<!-- Checkout Modal -->
 <div class="modal-overlay" id="paymentModal">
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -473,49 +461,53 @@
 
         const data = rawImageData.data;
         const width = canvas.width;
+        
         let edgeScore = 0;
-        let brightnessScore = 0;
+        let brightnessTotal = 0;
         let samples = 0;
 
-        // Обновленная ИИ-логика: оценивает резкость (границы) и среднее освещение
-        for (let i = 0; i < data.length; i += 32) { 
-            let x = (i / 4) % width;
-            if (x > 1 && x < width - 1 && i > width * 4) {
-                let r = data[i], g = data[i+1], b = data[i+2];
-                let currentBrightness = (r + g + b) / 3;
-                brightnessScore += currentBrightness;
+        // Продвинутая математическая модель анализа
+        for (let i = 0; i < data.length; i += 64) { 
+            let r = data[i], g = data[i+1], b = data[i+2];
+            let lum = (r * 0.299 + g * 0.587 + b * 0.114);
+            
+            brightnessTotal += lum;
+            samples++;
 
-                let current = (r + g + b);
-                let left = (data[i-4] + data[i-3] + data[i-2]);
-                let top = (data[i - width*4] + data[i - width*4 + 1] + data[i - width*4 + 2]);
-                
-                let diff = Math.abs(current - left) + Math.abs(current - top);
-                edgeScore += diff;
-                samples++;
+            if (i > width * 4 && i % (width * 4) > 4) {
+                let prevH = (data[i-4] * 0.299 + data[i-3] * 0.587 + data[i-2] * 0.114);
+                let prevV = (data[i - width*4] * 0.299 + data[i - width*4 + 1] * 0.587 + data[i - width*4 + 2] * 0.114);
+                edgeScore += Math.abs(lum - prevH) + Math.abs(lum - prevV);
             }
         }
 
-        let avgEdgeSharpness = edgeScore / samples;
-        let avgBrightness = brightnessScore / samples;
+        const avgBrightness = brightnessTotal / samples;
+        const avgEdge = edgeScore / samples;
         
-        // Более "добрая" и честная логика
-        let baseScore = 5.0; // Минимальная база теперь выше
-        
-        // Бонус за четкие контуры (до 3.5 баллов)
-        baseScore += Math.min(3.5, avgEdgeSharpness / 25); 
+        // Реалистичный расчет (6.2 - средняя база)
+        let finalScore = 6.2; 
 
-        // Бонус за хорошее освещение (если фото не слишком темное и не пересвечено)
-        if (avgBrightness > 70 && avgBrightness < 210) {
-            baseScore += 1.0;
-        } else {
-            baseScore += 0.4; // Утешительный балл за плохой свет
+        // Коррекция по детализации
+        let edgeFactor = (avgEdge / 20); 
+        finalScore += (edgeFactor - 1) * 1.5; 
+
+        // Штраф за плохое освещение
+        let lightDeviation = Math.abs(avgBrightness - 127);
+        if (lightDeviation > 50) {
+            finalScore -= (lightDeviation - 50) * 0.02;
         }
 
-        // Рандомизация для эффекта живой оценки, но она стала мягче
-        let variance = (Math.random() * 0.8) - 0.1; 
-        let finalScore = Math.min(9.9, Math.max(4.0, baseScore + variance)).toFixed(1);
+        // Микро-вариация для естественности
+        let microVariance = (Math.sin(avgBrightness * avgEdge) * 0.3);
+        finalScore += microVariance;
 
-        displayResults(parseFloat(finalScore));
+        // Лимиты при плохом качестве
+        if (finalScore > 8.5 && (avgBrightness < 80 || avgBrightness > 200)) {
+            finalScore = 8.5;
+        }
+
+        let totalResult = Math.min(9.8, Math.max(3.1, finalScore));
+        displayResults(parseFloat(totalResult.toFixed(1)));
     }
 
     function displayResults(score) {
@@ -525,7 +517,6 @@
         let status = "";
         let color = "";
 
-        // Пороги статусов подогнаны под новые, более высокие средние оценки
         if (score < 5.0) { status = "SUB-5"; color = "#ff4b4b"; }
         else if (score < 6.8) { status = "MTN"; color = "#ffd151"; }
         else if (score < 8.2) { status = "HTN"; color = "#7be495"; }
@@ -549,7 +540,6 @@
         }
     }
 
-    // Modal Logic
     const modal = document.getElementById('paymentModal');
     function openModal(planName) {
         document.getElementById('modalPlanName').innerText = `Selected Plan: ${planName}`;
