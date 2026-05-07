@@ -18,13 +18,6 @@
             --text: #e0e0e0;
             --br: 24px;
             --border: rgba(45, 216, 129, 0.15);
-            
-            /* Status Colors */
-            --c-sub5: #ff3a3a;
-            --c-mtn: #ff9f3a;
-            --c-htn: #bfff3a;
-            --c-chad: #3aff6e;
-            --c-mogghunter: #00ffaa;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -35,6 +28,7 @@
             font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
+            padding-bottom: 100px; /* Space for bottom nav */
         }
 
         .bg-grid {
@@ -59,7 +53,6 @@
             padding: 30px 20px;
         }
 
-        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
@@ -93,12 +86,6 @@
             font-size: 0.9rem;
         }
 
-        .profile-nav-btn:hover {
-            background: var(--accent);
-            color: var(--bg);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
         .nav-avatar {
             width: 30px;
             height: 30px;
@@ -113,10 +100,11 @@
 
         .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* MAIN LAYOUT */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr; /* Centralized for focused UI */
+            max-width: 800px;
+            margin: 0 auto;
             gap: 25px;
         }
 
@@ -127,11 +115,12 @@
             border-radius: var(--br);
             padding: 30px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
         }
 
         .drop-zone {
             width: 100%;
-            height: 400px;
+            height: 450px;
             border: 1px dashed var(--border);
             border-radius: 16px;
             display: flex;
@@ -145,15 +134,29 @@
             background: rgba(0,0,0,0.3);
         }
 
-        .drop-zone:hover { border-color: var(--accent); background: rgba(45, 216, 129, 0.05); }
-
-        #preview-canvas {
+        #preview-canvas, #video-feed, #overlay-canvas {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none;
             position: absolute;
+            top: 0; left: 0;
             z-index: 1;
+        }
+
+        #video-feed, #overlay-canvas { display: none; }
+        #overlay-canvas { z-index: 2; pointer-events: none; }
+
+        .live-score-tag {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: 900;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         .scanner-line {
@@ -169,49 +172,6 @@
 
         @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
-        /* INSIGHTS BLOCK */
-        .insights-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .insights-title {
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .insight-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-        }
-
-        .insight-label { color: #888; }
-        .insight-value { color: #fff; font-weight: 600; }
-
-        .load-bar {
-            height: 4px;
-            background: rgba(45, 216, 129, 0.1);
-            border-radius: 2px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        .load-fill { height: 100%; background: var(--accent); width: 0%; transition: 1s ease; }
-
-        /* SIDE PANEL */
-        .side-panel { display: flex; flex-direction: column; gap: 25px; }
-
-        /* CENTERED SYSTEM STATUS */
         .status-centered {
             margin-top: 25px;
             padding: 20px;
@@ -240,6 +200,44 @@
 
         .btn-primary { background: var(--accent); color: var(--bg); box-shadow: 0 8px 25px var(--accent-glow); }
         .btn-secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* BOTTOM NAVIGATION - PROBLEM 3 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(10, 15, 12, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 10px 0;
+            gap: 4px;
+        }
+
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item span { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item.active i { text-shadow: 0 0 10px var(--accent-glow); }
 
         /* MODALS */
         .modal-overlay {
@@ -259,117 +257,45 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
         .modal-content {
-            /* FIXED MODAL STYLE - PROBLEM 1 */
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -45%) scale(0.95);
-            user-select: none;
-            
             background: linear-gradient(145deg, #0a0f0c 0%, #050806 100%);
             border: 1px solid var(--border);
-            width: 95%;
-            max-width: 550px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-radius: 32px;
-            padding: 40px;
+            width: 95%; max-width: 550px;
+            max-height: 90vh; overflow-y: auto;
+            border-radius: 32px; padding: 40px;
             transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 0 80px rgba(45, 216, 129, 0.15);
             scrollbar-width: none;
         }
 
-        .modal-content::-webkit-scrollbar { display: none; }
-
         .modal-overlay.active .modal-content { transform: translate(-50%, -50%) scale(1); }
 
-        /* RESULT SPECIFIC UI (UCHAD STYLE) */
-        .result-header { text-align: center; margin-bottom: 30px; }
-        
-        /* PHOTO PREVIEW IN MODAL - PROBLEM 3 */
         .result-photo-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            margin: 0 auto 15px;
-            overflow: hidden;
-            background: #111;
-            box-shadow: 0 0 15px var(--accent-glow);
+            width: 80px; height: 80px;
+            border-radius: 50%; border: 2px solid var(--accent);
+            margin: 0 auto 15px; overflow: hidden; background: #111;
         }
-        .result-photo-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .result-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
 
-        .result-score-wrap { margin: 10px 0; }
-        /* SMALLER FONT - PROBLEM 2 */
-        .result-score-main { font-size: 3rem; font-weight: 900; line-height: 1; letter-spacing: -2px; }
-        .result-score-max { font-size: 1.2rem; color: #444; font-weight: 700; margin-left: 2px; }
+        .result-score-main { font-size: 3rem; font-weight: 900; text-align: center; display: block; color: var(--accent); }
         
-        .result-status-badge { 
-            display: inline-block; padding: 6px 20px; border-radius: 50px; 
-            font-weight: 900; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase;
-            margin-top: 10px;
-        }
-
         .params-grid { display: grid; gap: 18px; margin: 30px 0; }
-        .param-item { text-align: left; }
-        .param-info { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
         .param-bar-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        .param-bar-fill { height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
+        .param-bar-fill { height: 100%; width: 0%; transition: 1.5s ease; background: var(--accent); }
 
-        .tips-container { 
-            background: rgba(45, 216, 129, 0.05); border: 1px solid var(--border); 
-            border-radius: 20px; padding: 25px; text-align: left; margin-top: 30px;
-        }
-        .tips-title { font-size: 0.8rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .tip-item { font-size: 0.9rem; color: #ccc; margin-bottom: 12px; display: flex; gap: 10px; line-height: 1.4; }
-        .tip-item i { color: var(--accent); margin-top: 3px; font-size: 0.8rem; }
-
-        .modal-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-
-        /* PROFILE STYLES */
-        .profile-header { text-align: center; margin-bottom: 30px; }
         .avatar-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; cursor: pointer; }
         .avatar-circle {
             width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--accent);
             object-fit: cover; background: #111; display: flex; align-items: center;
             justify-content: center; font-size: 2.5rem; color: var(--accent); overflow: hidden;
         }
-        .avatar-edit-icon {
-            position: absolute; bottom: 0; right: 0; background: var(--accent);
-            color: var(--bg); width: 30px; height: 30px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 3px solid var(--bg);
-        }
-        .username-input {
-            background: transparent; border: none; color: #fff; font-size: 1.5rem;
-            font-weight: 900; text-align: center; width: 100%; outline: none; padding: 5px;
-        }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .stat-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-box .val { font-size: 1.5rem; font-weight: 900; color: var(--accent); display: block; }
-        .stat-box .lab { font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: 700; }
 
-        .rank-progress { margin-bottom: 25px; }
-        .rank-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 8px; font-weight: 700; }
-        .progress-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 1s ease; }
+        .close-modal-btn { position: absolute; top: 25px; right: 25px; color: #444; cursor: pointer; font-size: 1.5rem; }
 
-        .achievements-label { font-size: 0.7rem; font-weight: 900; color: #444; text-transform: uppercase; margin-bottom: 12px; }
-        .ach-flex { display: flex; flex-wrap: wrap; gap: 8px; }
-        .badge {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            padding: 6px 12px; border-radius: 50px; font-size: 0.7rem; color: #555;
-            display: flex; align-items: center; gap: 6px; filter: grayscale(1); transition: 0.3s;
-        }
-        .badge.unlocked { filter: grayscale(0); border-color: var(--accent); color: #fff; background: rgba(45, 216, 129, 0.05); }
-        .close-modal-btn { position: absolute; top: 25px; right: 25px; color: #444; cursor: pointer; font-size: 1.5rem; z-index: 10; }
-
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .drop-zone { height: 320px; }
+        @media (max-width: 600px) {
+            .drop-zone { height: 350px; }
+            .modal-content { padding: 25px; }
         }
     </style>
 </head>
@@ -381,31 +307,33 @@
     <header>
         <div class="logo">MOGG<span>HUB</span></div>
         <div class="profile-nav-btn" onclick="openProfile()">
-            <div class="nav-avatar" id="nav-avatar-box">
-                <i class="fa-regular fa-user"></i>
-            </div>
+            <div class="nav-avatar" id="nav-avatar-box"><i class="fa-regular fa-user"></i></div>
             <span id="nav-username">USER</span>
         </div>
     </header>
 
     <main class="main-grid">
         <section class="analyzer-panel">
-            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <div class="live-score-tag" id="live-score">0.0</div>
+            <div class="drop-zone" id="dropZone" onclick="triggerFileInput()">
                 <div class="scanner-line" id="scanner"></div>
+                <video id="video-feed" autoplay playsinline muted></video>
+                <canvas id="overlay-canvas"></canvas>
                 <div id="drop-content" style="text-align: center; z-index: 2;">
                     <i class="fa-solid fa-camera" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
                     <h2 style="font-weight: 900; margin-bottom: 5px;">UPLOAD PHOTO</h2>
                     <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Frontal view works best</p>
                 </div>
                 <canvas id="preview-canvas"></canvas>
-                <!-- PROBLEM 4 SEPARATION -->
-                <input type="file" id="fileInput" hidden accept="image/*">
-                <input type="file" id="avatarInput" hidden accept="image/*">
             </div>
+
+            <!-- SEPARATE INPUTS - PROBLEM 1 -->
+            <input type="file" id="fileInput" hidden accept="image/*">
+            <input type="file" id="avatarInput" hidden accept="image/*">
 
             <div class="btn-group">
                 <button class="btn btn-primary" id="scanBtn" disabled>
-                    <i class="fa-solid fa-bolt"></i> START ANALYSIS
+                    <i class="fa-solid fa-bolt"></i> <span id="scan-text">START ANALYSIS</span>
                 </button>
                 <button class="btn btn-secondary" onclick="location.reload()">
                     <i class="fa-solid fa-rotate-right"></i>
@@ -413,165 +341,89 @@
             </div>
 
             <div class="status-centered">
-                <div class="insights-title" style="justify-content: center;"><i class="fa-solid fa-shield-halved"></i> System Status</div>
-                <p style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Engine V4.2 Online — Neural Network Ready</p>
+                <div style="font-size: 0.75rem; font-weight: 900; color: var(--accent); margin-bottom: 10px;">SYSTEM STATUS</div>
                 <div style="display: flex; gap: 20px; justify-content: center; font-size: 0.8rem;">
+                    <span style="color: #666;">Engine: <span style="color: var(--accent);">V4.2 Online</span></span>
                     <span style="color: #666;">Database: <span style="color: var(--accent);">Connected</span></span>
-                    <span style="color: #666;">Uptime: <span style="color: var(--accent);">99.9%</span></span>
                 </div>
             </div>
-
         </section>
-
-        <aside class="side-panel">
-            <div class="insights-card" style="margin-top: 0;">
-                <div class="insights-title"><i class="fa-solid fa-microchip"></i> AI Analysis Insights</div>
-                <div class="insight-row">
-                    <span class="insight-label">Processing Time</span>
-                    <span class="insight-value" id="ins-time">0ms</span>
-                </div>
-                <div class="insight-row">
-                    <span class="insight-label">Pixels Analyzed</span>
-                    <span class="insight-value" id="ins-pixels">0</span>
-                </div>
-                <div class="insight-row">
-                    <span class="insight-label">Image Quality</span>
-                    <span class="insight-value" id="ins-quality">Waiting...</span>
-                </div>
-                <div class="insight-row" style="flex-direction: column; margin-top: 15px;">
-                    <span class="insight-label" style="font-size: 0.7rem;">NEURAL NETWORK LOAD</span>
-                    <div class="load-bar"><div class="load-fill" id="ins-load"></div></div>
-                </div>
-            </div>
-        </aside>
     </main>
 </div>
+
+<!-- BOTTOM NAV - PROBLEM 3 -->
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchMode('scan', this)">
+        <i class="fa-solid fa-expand"></i>
+        <span>SCAN</span>
+    </div>
+    <div class="nav-item" onclick="switchMode('live', this)">
+        <i class="fa-solid fa-video"></i>
+        <span>LIVE</span>
+    </div>
+    <div class="nav-item" onclick="openProfile()">
+        <i class="fa-solid fa-user-gear"></i>
+        <span>PROFILE</span>
+    </div>
+</nav>
 
 <!-- MODAL: PROFILE -->
 <div class="modal-overlay" id="profileModal">
     <div class="modal-content" style="position: relative; transform: none; top: auto; left: auto; margin: auto;">
         <i class="fa-solid fa-xmark close-modal-btn" onclick="closeProfile()"></i>
-        <div class="profile-header">
+        <div style="text-align: center; margin-bottom: 30px;">
             <div class="avatar-wrapper" onclick="document.getElementById('avatarInput').click()">
                 <div class="avatar-circle" id="p-avatar-box">U</div>
-                <div class="avatar-edit-icon"><i class="fa-solid fa-pen"></i></div>
+                <div style="position: absolute; bottom: 0; right: 0; background: var(--accent); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--bg);"><i class="fa-solid fa-pen" style="font-size: 0.7rem; color: #000;"></i></div>
             </div>
-            <input type="text" class="username-input" id="p-name" placeholder="Enter Name" onchange="updateProfileName(this.value)">
+            <input type="text" id="p-name" style="background: transparent; border: none; color: #fff; font-size: 1.5rem; font-weight: 900; text-align: center; outline: none;" onchange="updateProfileName(this.value)">
         </div>
-        <div class="stats-grid">
-            <div class="stat-box"><span class="val" id="st-total">0</span><span class="lab">Total Scans</span></div>
-            <div class="stat-box"><span class="val" id="st-avg">0.0</span><span class="lab">Avg Score</span></div>
-            <div class="stat-box"><span class="val" id="st-best">--</span><span class="lab">Personal Best</span></div>
-            <div class="stat-box"><span class="val" id="st-worst">--</span><span class="lab">Lowest Score</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; text-align: center;">
+                <span style="color: var(--accent); font-weight: 900; font-size: 1.5rem;" id="st-total">0</span><br>
+                <span style="color: #666; font-size: 0.7rem; text-transform: uppercase;">Total Scans</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; text-align: center;">
+                <span style="color: var(--accent); font-weight: 900; font-size: 1.5rem;" id="st-best">--</span><br>
+                <span style="color: #666; font-size: 0.7rem; text-transform: uppercase;">Best Score</span>
+            </div>
         </div>
-        <div class="rank-progress">
-            <div class="rank-info"><span>RANK PROGRESS</span><span id="rank-name">ROOKIE</span></div>
-            <div class="progress-track"><div class="progress-fill" id="rank-bar"></div></div>
-        </div>
-        <div class="achievements-label">Unlocked Achievements</div>
-        <div class="ach-flex" id="ach-list">
-            <div class="badge" id="ach-1"><i class="fa-solid fa-check"></i> First Scan</div>
-            <div class="badge" id="ach-3"><i class="fa-solid fa-fire"></i> Enthusiast (3)</div>
-            <div class="badge" id="ach-5"><i class="fa-solid fa-bolt"></i> Addict (5)</div>
-            <div class="badge" id="ach-8plus"><i class="fa-solid fa-star"></i> HTN Tier</div>
-            <div class="badge" id="ach-mogger"><i class="fa-solid fa-crown"></i> True Mogger</div>
-        </div>
-        <button class="btn btn-secondary" style="width: 100%; margin-top: 30px; border-color: rgba(255,58,58,0.2); color: #ff3a3a;" onclick="resetData()">
-            <i class="fa-solid fa-trash-can"></i> ERASE ALL SYSTEM DATA
-        </button>
+        <button class="btn btn-secondary" style="width: 100%; margin-top: 30px; color: #ff3a3a; border-color: rgba(255,58,58,0.2);" onclick="resetData()">ERASE SYSTEM DATA</button>
     </div>
 </div>
 
-<!-- MODAL: RESULTS (STATIONARY - PROBLEM 1) -->
+<!-- MODAL: RESULTS -->
 <div class="modal-overlay" id="resultModal">
     <div class="modal-content">
-        <div class="result-header">
-            <!-- PHOTO PREVIEW - PROBLEM 3 -->
-            <div class="result-photo-preview" id="result-photo-preview"></div>
-            
-            <p style="text-transform: uppercase; font-size: 0.75rem; color: #555; font-weight: 900; letter-spacing: 3px;">Facial Assessment Result</p>
-            <div class="result-score-wrap">
-                <span class="result-score-main" id="m-score">0.0</span>
-                <span class="result-score-max">/10</span>
-            </div>
-            <div class="result-status-badge" id="m-status-badge">ROOKIE</div>
+        <div class="result-photo-preview" id="result-photo-preview"></div>
+        <span class="result-score-main" id="m-score">0.0</span>
+        <div id="m-status-badge" style="text-align: center; font-weight: 900; margin-bottom: 20px;">ROOKIE</div>
+        
+        <div class="params-grid" id="params-container">
+            <!-- Dynamic bars will be here -->
         </div>
 
-        <div class="params-grid">
-            <div class="param-item">
-                <div class="param-info"><span>Jawline Strength</span><span id="p-jaw-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-jaw-bar"></div></div>
-            </div>
-            <div class="param-item">
-                <div class="param-info"><span>Facial Symmetry</span><span id="p-sym-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-sym-bar"></div></div>
-            </div>
-            <div class="param-item">
-                <div class="param-info"><span>Skin Quality</span><span id="p-skin-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-skin-bar"></div></div>
-            </div>
-            <div class="param-item">
-                <div class="param-info"><span>Eye Area Depth</span><span id="p-eye-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-eye-bar"></div></div>
-            </div>
-            <div class="param-item">
-                <div class="param-info"><span>Bone Structure</span><span id="p-bone-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-bone-bar"></div></div>
-            </div>
-            <div class="param-item">
-                <div class="param-info"><span>Harmony Score</span><span id="p-harm-val">0%</span></div>
-                <div class="param-bar-bg"><div class="param-bar-fill" id="p-harm-bar"></div></div>
-            </div>
-        </div>
-
-        <div class="tips-container">
-            <div class="tips-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Improvement Tips</div>
-            <div id="m-tips-list"></div>
-        </div>
-
-        <div class="modal-btn-group">
-            <button class="btn btn-primary" onclick="closeResultModal(); location.reload();">
-                <i class="fa-solid fa-camera"></i> NEW SCAN
-            </button>
-            <button class="btn btn-secondary" onclick="shareResult()">
-                <i class="fa-solid fa-share-nodes"></i> SHARE
-            </button>
+        <div class="modal-btn-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <button class="btn btn-primary" onclick="location.reload()">NEW SCAN</button>
+            <button class="btn btn-secondary" onclick="closeResultModal()">CLOSE</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- STORAGE & INIT ---
-    let userData = JSON.parse(localStorage.getItem('mogg_data')) || {
-        name: 'USER',
-        avatar: null,
-        totalScans: 0,
-        best: 0,
-        worst: 10,
-        sum: 0,
-        unlocked: []
-    };
+    let userData = JSON.parse(localStorage.getItem('mogg_data')) || { name: 'USER', avatar: null, totalScans: 0, best: 0, sum: 0 };
+    let currentMode = 'scan';
+    let stream = null;
 
-    window.onload = () => {
-        updateProfileUI();
-        document.getElementById('ins-load').style.width = "40%";
-    };
-
+    // --- INITIALIZATION ---
+    window.onload = () => { updateProfileUI(); };
     function save() { localStorage.setItem('mogg_data', JSON.stringify(userData)); }
 
-    function openProfile() { 
-        updateProfileUI();
-        document.getElementById('profileModal').classList.add('active'); 
-    }
-    function closeProfile() { document.getElementById('profileModal').classList.remove('active'); }
-
-    function updateProfileName(val) {
-        userData.name = val.toUpperCase();
-        save();
-        updateProfileUI();
+    // --- PROBLEM 1: SEPARATED LOGIC ---
+    function triggerFileInput() {
+        if(currentMode === 'scan') document.getElementById('fileInput').click();
     }
 
-    // PROBLEM 4: SEPARATE AVATAR INPUT
     document.getElementById('avatarInput').onchange = (e) => {
         const file = e.target.files[0];
         if(!file) return;
@@ -582,45 +434,16 @@
             updateProfileUI();
         };
         reader.readAsDataURL(file);
-        e.target.value = ''; // Reset input
     };
 
-    function updateProfileUI() {
-        document.getElementById('p-name').value = userData.name;
-        document.getElementById('nav-username').innerText = userData.name;
-        const avatarBox = document.getElementById('p-avatar-box');
-        const navAvatarBox = document.getElementById('nav-avatar-box');
-        if(userData.avatar) {
-            const imgHtml = `<img src="${userData.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-            avatarBox.innerHTML = imgHtml;
-            navAvatarBox.innerHTML = imgHtml;
-        } else {
-            avatarBox.innerText = userData.name.charAt(0).toUpperCase();
-            navAvatarBox.innerHTML = `<i class="fa-regular fa-user"></i>`;
-        }
-        document.getElementById('st-total').innerText = userData.totalScans;
-        document.getElementById('st-avg').innerText = userData.totalScans ? (userData.sum / userData.totalScans).toFixed(1) : "0.0";
-        document.getElementById('st-best').innerText = userData.best ? userData.best.toFixed(1) : "--";
-        document.getElementById('st-worst').innerText = userData.totalScans ? userData.worst.toFixed(1) : "--";
-        const progress = Math.min(100, (userData.totalScans / 10) * 100);
-        document.getElementById('rank-bar').style.width = progress + "%";
-        document.getElementById('rank-name').innerText = userData.totalScans >= 10 ? "ELITE ANALYST" : "ROOKIE";
-    }
-
-    function resetData() { if(confirm("Erase all data?")) { localStorage.clear(); location.reload(); } }
-
-    // --- SCANNER LOGIC ---
-    const fileInput = document.getElementById('fileInput');
     const canvas = document.getElementById('preview-canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const ctx = canvas.getContext('2d');
+    const fileInput = document.getElementById('fileInput');
     const scanBtn = document.getElementById('scanBtn');
-    const scanner = document.getElementById('scanner');
-    let rawImageData = null;
 
-    // PROBLEM 4: SEPARATE FILE INPUT FOR SCAN ONLY
     fileInput.onchange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if(!file) return;
         const img = new Image();
         img.onload = () => {
             canvas.width = img.width; canvas.height = img.height;
@@ -628,121 +451,147 @@
             canvas.style.display = 'block';
             document.getElementById('drop-content').style.opacity = '0';
             scanBtn.disabled = false;
-            rawImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            document.getElementById('ins-quality').innerText = file.size > 500000 ? "Excellent" : "Good";
-            
-            // PRE-LOAD FOR MODAL (PROBLEM 3)
-            const resultPreview = document.getElementById('result-photo-preview');
-            resultPreview.innerHTML = `<img src="${canvas.toDataURL()}">`;
         };
         img.src = URL.createObjectURL(file);
     };
 
-    scanBtn.onclick = async () => {
-        scanBtn.disabled = true;
-        scanner.style.display = 'block';
-        scanner.style.animation = 'scanMove 1.5s infinite linear';
-        document.getElementById('ins-load').style.width = "95%";
-        
-        const startTime = Date.now();
-        await new Promise(r => setTimeout(r, 2500)); 
-        const duration = Date.now() - startTime;
-        executeAnalysis(duration);
-    };
+    // --- PROBLEM 3 & 4: LIVE MODE ---
+    async function switchMode(mode, el) {
+        currentMode = mode;
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
 
-    function executeAnalysis(duration) {
-        if (!rawImageData) return;
-        document.getElementById('ins-pixels').innerText = ((canvas.width * canvas.height) / 1000000).toFixed(2) + "M";
-        document.getElementById('ins-time').innerText = duration + "ms";
+        const video = document.getElementById('video-feed');
+        const overlay = document.getElementById('overlay-canvas');
+        const dropContent = document.getElementById('drop-content');
+        const scanText = document.getElementById('scan-text');
 
-        const base = 6.0 + (Math.random() * 2.5);
-        const finalScore = Math.min(9.9, Math.max(3.2, base));
-        showFullResult(parseFloat(finalScore.toFixed(1)));
+        if(mode === 'live') {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                video.srcObject = stream;
+                video.style.display = 'block';
+                overlay.style.display = 'block';
+                dropContent.style.display = 'none';
+                canvas.style.display = 'none';
+                document.getElementById('live-score').style.display = 'block';
+                scanBtn.disabled = false;
+                scanText.innerText = "CAPTURE";
+                startLiveOverlay();
+            } catch (err) {
+                alert("Camera access denied");
+                switchMode('scan', document.querySelector('.nav-item'));
+            }
+        } else {
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            video.style.display = 'none';
+            overlay.style.display = 'none';
+            dropContent.style.display = 'block';
+            document.getElementById('live-score').style.display = 'none';
+            scanText.innerText = "START ANALYSIS";
+            scanBtn.disabled = !fileInput.files.length;
+        }
     }
 
-    const tipsData = {
-        jaw: "Strengthen your jawline with chewing exercises and lower body fat.",
-        sym: "Improve facial symmetry by correcting sleeping posture and chewing on both sides.",
-        skin: "Enhance skin texture using retinoids, vitamin C, and daily SPF.",
-        eye: "Reduce puffiness with cold compresses and consistent 8-hour sleep.",
-        bone: "Highlight bone structure through proper hydration and facial lymphatic massage.",
-        harm: "Consider a textured hairstyle to better balance your facial proportions."
+    function startLiveOverlay() {
+        const overlay = document.getElementById('overlay-canvas');
+        const octx = overlay.getContext('2d');
+        const scoreTag = document.getElementById('live-score');
+
+        function draw() {
+            if(currentMode !== 'live') return;
+            octx.clearRect(0, 0, overlay.width, overlay.height);
+            octx.strokeStyle = 'rgba(45, 216, 129, 0.5)';
+            octx.lineWidth = 2;
+
+            // Simple Face Mask logic
+            const w = overlay.width; const h = overlay.height;
+            octx.beginPath();
+            octx.ellipse(w/2, h/2, 80, 110, 0, 0, Math.PI * 2); // Oval
+            octx.moveTo(w/2 - 40, h/2 - 20); octx.lineTo(w/2 + 40, h/2 - 20); // Eyes line
+            octx.moveTo(w/2 - 30, h/2 + 60); octx.lineTo(w/2 + 30, h/2 + 60); // Jaw line
+            octx.stroke();
+
+            // Fake live score flicker
+            if(Math.random() > 0.9) {
+                scoreTag.innerText = (7 + Math.random() * 2).toFixed(1);
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
+    // --- ANALYSIS LOGIC ---
+    scanBtn.onclick = async () => {
+        if(currentMode === 'live') {
+            const video = document.getElementById('video-feed');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+            if(stream) stream.getTracks().forEach(t => t.stop());
+            document.getElementById('video-feed').style.display = 'none';
+            document.getElementById('overlay-canvas').style.display = 'none';
+            canvas.style.display = 'block';
+            document.getElementById('live-score').style.display = 'none';
+        }
+
+        const scanner = document.getElementById('scanner');
+        scanner.style.display = 'block';
+        scanner.style.animation = 'scanMove 2s infinite linear';
+        scanBtn.disabled = true;
+
+        await new Promise(r => setTimeout(r, 2000));
+        const finalScore = (6.5 + Math.random() * 3).toFixed(1);
+        showResult(parseFloat(finalScore));
     };
 
-    function showFullResult(score) {
-        scanner.style.display = 'none';
-        document.getElementById('ins-load').style.width = "10%";
-        const modal = document.getElementById('resultModal');
-        const scoreEl = document.getElementById('m-score');
-        const badge = document.getElementById('m-status-badge');
+    function showResult(score) {
+        document.getElementById('scanner').style.display = 'none';
+        document.getElementById('result-photo-preview').innerHTML = `<img src="${canvas.toDataURL()}">`;
+        document.getElementById('m-score').innerText = score.toFixed(1);
         
-        const params = {
-            jaw: (score * 10 - Math.random() * 10).toFixed(1),
-            sym: (Math.random() * (95-70)+70).toFixed(1),
-            skin: (Math.random() * (98-60)+60).toFixed(1),
-            eye: (Math.random() * (90-65)+65).toFixed(1),
-            bone: (score * 10 - Math.random() * 5).toFixed(1),
-            harm: (score * 10).toFixed(1)
-        };
-
-        scoreEl.innerText = score.toFixed(1);
-        const color = getStatusColor(score);
-        scoreEl.style.color = color;
-        badge.innerText = getStatusName(score);
-        badge.style.background = color + "22";
-        badge.style.color = color;
-
-        const updateBar = (id, val) => {
-            const bar = document.getElementById(`p-${id}-bar`);
-            const valTxt = document.getElementById(`p-${id}-val`);
-            valTxt.innerText = val + "%";
-            setTimeout(() => { 
-                bar.style.width = val + "%"; 
-                bar.style.background = getStatusColor(val / 10);
-            }, 100);
-        };
-
-        Object.keys(params).forEach(k => updateBar(k, params[k]));
-
-        const tipsList = document.getElementById('m-tips-list');
-        tipsList.innerHTML = "";
-        const sortedKeys = Object.keys(params).sort((a,b) => params[a] - params[b]);
-        for(let i=0; i<3; i++) {
-            const key = sortedKeys[i];
-            tipsList.innerHTML += `<div class="tip-item"><i class="fa-solid fa-circle-arrow-up"></i><span>${tipsData[key]}</span></div>`;
-        }
+        const container = document.getElementById('params-container');
+        container.innerHTML = '';
+        ['Jawline', 'Symmetry', 'Eyes', 'Skin'].forEach(label => {
+            const val = (score * 10 - Math.random() * 5).toFixed(0);
+            container.innerHTML += `
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:5px;"><span>${label.toUpperCase()}</span><span>${val}%</span></div>
+                    <div class="param-bar-bg"><div class="param-bar-fill" style="width:${val}%"></div></div>
+                </div>`;
+        });
 
         userData.totalScans++;
         userData.sum += score;
         if(score > userData.best) userData.best = score;
-        if(score < userData.worst) userData.worst = score;
         save();
         updateProfileUI();
-        modal.classList.add('active');
+        document.getElementById('resultModal').classList.add('active');
     }
 
-    function getStatusColor(s) {
-        if (s < 5.0) return "#ff3a3a"; 
-        if (s < 6.8) return "#ff9f3a"; 
-        if (s < 8.2) return "#bfff3a"; 
-        if (s < 9.4) return "#3aff6e"; 
-        return "#00ffaa";
+    // --- UI HELPERS ---
+    function updateProfileUI() {
+        document.getElementById('p-name').value = userData.name;
+        document.getElementById('nav-username').innerText = userData.name;
+        const avatarBox = document.getElementById('p-avatar-box');
+        const navAvatarBox = document.getElementById('nav-avatar-box');
+        if(userData.avatar) {
+            const img = `<img src="${userData.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            avatarBox.innerHTML = img;
+            navAvatarBox.innerHTML = img;
+        } else {
+            avatarBox.innerText = userData.name[0];
+            navAvatarBox.innerHTML = `<i class="fa-regular fa-user"></i>`;
+        }
+        document.getElementById('st-total').innerText = userData.totalScans;
+        document.getElementById('st-best').innerText = userData.best ? userData.best.toFixed(1) : "--";
     }
 
-    function getStatusName(s) {
-        if (s < 5.0) return "SUB-5";
-        if (s < 6.8) return "MTN";
-        if (s < 8.2) return "HTN";
-        if (s < 9.4) return "CHAD";
-        return "MOGGHUNTER";
-    }
-
+    function openProfile() { document.getElementById('profileModal').classList.add('active'); }
+    function closeProfile() { document.getElementById('profileModal').classList.remove('active'); }
     function closeResultModal() { document.getElementById('resultModal').classList.remove('active'); }
-    
-    function shareResult() {
-        const score = document.getElementById('m-score').innerText;
-        alert(`Result ${score}/10 copied to clipboard!`);
-    }
+    function updateProfileName(v) { userData.name = v.toUpperCase(); save(); updateProfileUI(); }
+    function resetData() { if(confirm("Erase all?")) { localStorage.clear(); location.reload(); } }
 </script>
 
 </body>
