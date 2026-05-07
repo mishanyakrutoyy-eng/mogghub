@@ -259,7 +259,6 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
         .modal-content {
-            /* FIXED MODAL STYLE - PROBLEM 1 */
             position: fixed;
             top: 50%;
             left: 50%;
@@ -283,10 +282,29 @@
 
         .modal-overlay.active .modal-content { transform: translate(-50%, -50%) scale(1); }
 
+        /* PROBLEM 1: MODAL LOGO */
+        .modal-logo {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+        }
+        .modal-logo span { 
+            background: var(--accent); 
+            color: var(--bg); 
+            padding: 0 4px; 
+            border-radius: 3px; 
+            margin-left: 2px;
+            font-size: 0.9rem;
+        }
+
         /* RESULT SPECIFIC UI (UCHAD STYLE) */
         .result-header { text-align: center; margin-bottom: 30px; }
         
-        /* PHOTO PREVIEW IN MODAL - PROBLEM 3 */
         .result-photo-preview {
             width: 80px;
             height: 80px;
@@ -304,7 +322,6 @@
         }
 
         .result-score-wrap { margin: 10px 0; }
-        /* SMALLER FONT - PROBLEM 2 */
         .result-score-main { font-size: 3rem; font-weight: 900; line-height: 1; letter-spacing: -2px; }
         .result-score-max { font-size: 1.2rem; color: #444; font-weight: 700; margin-left: 2px; }
         
@@ -398,7 +415,7 @@
                     <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Frontal view works best</p>
                 </div>
                 <canvas id="preview-canvas"></canvas>
-                <!-- PROBLEM 4 SEPARATION -->
+                
                 <input type="file" id="fileInput" hidden accept="image/*">
                 <input type="file" id="avatarInput" hidden accept="image/*">
             </div>
@@ -447,7 +464,6 @@
     </main>
 </div>
 
-<!-- MODAL: PROFILE -->
 <div class="modal-overlay" id="profileModal">
     <div class="modal-content" style="position: relative; transform: none; top: auto; left: auto; margin: auto;">
         <i class="fa-solid fa-xmark close-modal-btn" onclick="closeProfile()"></i>
@@ -482,11 +498,11 @@
     </div>
 </div>
 
-<!-- MODAL: RESULTS (STATIONARY - PROBLEM 1) -->
 <div class="modal-overlay" id="resultModal">
     <div class="modal-content">
+        <div class="modal-logo">MOGG<span>HUB</span></div>
+        
         <div class="result-header">
-            <!-- PHOTO PREVIEW - PROBLEM 3 -->
             <div class="result-photo-preview" id="result-photo-preview"></div>
             
             <p style="text-transform: uppercase; font-size: 0.75rem; color: #555; font-weight: 900; letter-spacing: 3px;">Facial Assessment Result</p>
@@ -571,25 +587,28 @@
         updateProfileUI();
     }
 
-    // PROBLEM 4: SEPARATE AVATAR INPUT
+    // PROBLEM 2: ISOLATED AVATAR HANDLER
     document.getElementById('avatarInput').onchange = (e) => {
         const file = e.target.files[0];
         if(!file) return;
+        
         const reader = new FileReader();
         reader.onload = (event) => {
             userData.avatar = event.target.result;
             save();
-            updateProfileUI();
+            updateProfileUI(); // Updates header and profile circle
         };
         reader.readAsDataURL(file);
-        e.target.value = ''; // Reset input
+        e.target.value = ''; 
     };
 
     function updateProfileUI() {
         document.getElementById('p-name').value = userData.name;
         document.getElementById('nav-username').innerText = userData.name;
+        
         const avatarBox = document.getElementById('p-avatar-box');
         const navAvatarBox = document.getElementById('nav-avatar-box');
+        
         if(userData.avatar) {
             const imgHtml = `<img src="${userData.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             avatarBox.innerHTML = imgHtml;
@@ -598,10 +617,12 @@
             avatarBox.innerText = userData.name.charAt(0).toUpperCase();
             navAvatarBox.innerHTML = `<i class="fa-regular fa-user"></i>`;
         }
+        
         document.getElementById('st-total').innerText = userData.totalScans;
         document.getElementById('st-avg').innerText = userData.totalScans ? (userData.sum / userData.totalScans).toFixed(1) : "0.0";
         document.getElementById('st-best').innerText = userData.best ? userData.best.toFixed(1) : "--";
         document.getElementById('st-worst').innerText = userData.totalScans ? userData.worst.toFixed(1) : "--";
+        
         const progress = Math.min(100, (userData.totalScans / 10) * 100);
         document.getElementById('rank-bar').style.width = progress + "%";
         document.getElementById('rank-name').innerText = userData.totalScans >= 10 ? "ELITE ANALYST" : "ROOKIE";
@@ -617,21 +638,26 @@
     const scanner = document.getElementById('scanner');
     let rawImageData = null;
 
-    // PROBLEM 4: SEPARATE FILE INPUT FOR SCAN ONLY
+    // PROBLEM 2: ISOLATED SCAN PHOTO HANDLER
     fileInput.onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        
         const img = new Image();
         img.onload = () => {
-            canvas.width = img.width; canvas.height = img.height;
+            canvas.width = img.width; 
+            canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
+            
+            // SHOW ONLY IN DROP-ZONE
             canvas.style.display = 'block';
             document.getElementById('drop-content').style.opacity = '0';
             scanBtn.disabled = false;
+            
             rawImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             document.getElementById('ins-quality').innerText = file.size > 500000 ? "Excellent" : "Good";
             
-            // PRE-LOAD FOR MODAL (PROBLEM 3)
+            // PRE-LOAD FOR RESULT MODAL
             const resultPreview = document.getElementById('result-photo-preview');
             resultPreview.innerHTML = `<img src="${canvas.toDataURL()}">`;
         };
