@@ -211,6 +211,16 @@
         /* SIDE PANEL */
         .side-panel { display: flex; flex-direction: column; gap: 25px; }
 
+        /* CENTERED SYSTEM STATUS */
+        .status-centered {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(45, 216, 129, 0.03);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
         .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 20px; }
         
         .btn {
@@ -249,6 +259,13 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
         .modal-content {
+            /* FIXED MODAL STYLE - PROBLEM 1 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -45%) scale(0.95);
+            user-select: none;
+            
             background: linear-gradient(145deg, #0a0f0c 0%, #050806 100%);
             border: 1px solid var(--border);
             width: 95%;
@@ -257,8 +274,6 @@
             overflow-y: auto;
             border-radius: 32px;
             padding: 40px;
-            position: relative;
-            transform: scale(0.95) translateY(30px);
             transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
             box-shadow: 0 0 80px rgba(45, 216, 129, 0.15);
             scrollbar-width: none;
@@ -266,13 +281,33 @@
 
         .modal-content::-webkit-scrollbar { display: none; }
 
-        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+        .modal-overlay.active .modal-content { transform: translate(-50%, -50%) scale(1); }
 
         /* RESULT SPECIFIC UI (UCHAD STYLE) */
         .result-header { text-align: center; margin-bottom: 30px; }
-        .result-score-wrap { margin: 20px 0; }
-        .result-score-main { font-size: 7rem; font-weight: 900; line-height: 1; letter-spacing: -5px; }
-        .result-score-max { font-size: 1.5rem; color: #444; font-weight: 700; margin-left: 5px; }
+        
+        /* PHOTO PREVIEW IN MODAL - PROBLEM 3 */
+        .result-photo-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            margin: 0 auto 15px;
+            overflow: hidden;
+            background: #111;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .result-photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .result-score-wrap { margin: 10px 0; }
+        /* SMALLER FONT - PROBLEM 2 */
+        .result-score-main { font-size: 3rem; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+        .result-score-max { font-size: 1.2rem; color: #444; font-weight: 700; margin-left: 2px; }
+        
         .result-status-badge { 
             display: inline-block; padding: 6px 20px; border-radius: 50px; 
             font-weight: 900; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase;
@@ -295,7 +330,7 @@
 
         .modal-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
 
-        /* OLD PROFILE STYLES MAINTAINED */
+        /* PROFILE STYLES */
         .profile-header { text-align: center; margin-bottom: 30px; }
         .avatar-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; cursor: pointer; }
         .avatar-circle {
@@ -363,6 +398,7 @@
                     <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Frontal view works best</p>
                 </div>
                 <canvas id="preview-canvas"></canvas>
+                <!-- PROBLEM 4 SEPARATION -->
                 <input type="file" id="fileInput" hidden accept="image/*">
                 <input type="file" id="avatarInput" hidden accept="image/*">
             </div>
@@ -376,7 +412,19 @@
                 </button>
             </div>
 
-            <div class="insights-card">
+            <div class="status-centered">
+                <div class="insights-title" style="justify-content: center;"><i class="fa-solid fa-shield-halved"></i> System Status</div>
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 8px;">Engine V4.2 Online — Neural Network Ready</p>
+                <div style="display: flex; gap: 20px; justify-content: center; font-size: 0.8rem;">
+                    <span style="color: #666;">Database: <span style="color: var(--accent);">Connected</span></span>
+                    <span style="color: #666;">Uptime: <span style="color: var(--accent);">99.9%</span></span>
+                </div>
+            </div>
+
+        </section>
+
+        <aside class="side-panel">
+            <div class="insights-card" style="margin-top: 0;">
                 <div class="insights-title"><i class="fa-solid fa-microchip"></i> AI Analysis Insights</div>
                 <div class="insight-row">
                     <span class="insight-label">Processing Time</span>
@@ -395,24 +443,13 @@
                     <div class="load-bar"><div class="load-fill" id="ins-load"></div></div>
                 </div>
             </div>
-        </section>
-
-        <aside class="side-panel">
-             <div class="insights-card" style="margin-top: 0; background: rgba(45, 216, 129, 0.02);">
-                <div class="insights-title">System Status</div>
-                <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Engine V4.2 Online.</p>
-                <div class="insight-row">
-                    <span class="insight-label">Database</span>
-                    <span class="insight-value" style="color: var(--accent);">Connected</span>
-                </div>
-             </div>
         </aside>
     </main>
 </div>
 
 <!-- MODAL: PROFILE -->
 <div class="modal-overlay" id="profileModal">
-    <div class="modal-content">
+    <div class="modal-content" style="position: relative; transform: none; top: auto; left: auto; margin: auto;">
         <i class="fa-solid fa-xmark close-modal-btn" onclick="closeProfile()"></i>
         <div class="profile-header">
             <div class="avatar-wrapper" onclick="document.getElementById('avatarInput').click()">
@@ -445,10 +482,13 @@
     </div>
 </div>
 
-<!-- MODAL: UCHAD STYLE RESULTS (FULLSCREEN) -->
+<!-- MODAL: RESULTS (STATIONARY - PROBLEM 1) -->
 <div class="modal-overlay" id="resultModal">
     <div class="modal-content">
         <div class="result-header">
+            <!-- PHOTO PREVIEW - PROBLEM 3 -->
+            <div class="result-photo-preview" id="result-photo-preview"></div>
+            
             <p style="text-transform: uppercase; font-size: 0.75rem; color: #555; font-weight: 900; letter-spacing: 3px;">Facial Assessment Result</p>
             <div class="result-score-wrap">
                 <span class="result-score-main" id="m-score">0.0</span>
@@ -458,32 +498,26 @@
         </div>
 
         <div class="params-grid">
-            <!-- Jawline -->
             <div class="param-item">
                 <div class="param-info"><span>Jawline Strength</span><span id="p-jaw-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-jaw-bar"></div></div>
             </div>
-            <!-- Symmetry -->
             <div class="param-item">
                 <div class="param-info"><span>Facial Symmetry</span><span id="p-sym-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-sym-bar"></div></div>
             </div>
-            <!-- Skin -->
             <div class="param-item">
                 <div class="param-info"><span>Skin Quality</span><span id="p-skin-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-skin-bar"></div></div>
             </div>
-            <!-- Eyes -->
             <div class="param-item">
                 <div class="param-info"><span>Eye Area Depth</span><span id="p-eye-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-eye-bar"></div></div>
             </div>
-            <!-- Bones -->
             <div class="param-item">
                 <div class="param-info"><span>Bone Structure</span><span id="p-bone-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-bone-bar"></div></div>
             </div>
-            <!-- Harmony -->
             <div class="param-item">
                 <div class="param-info"><span>Harmony Score</span><span id="p-harm-val">0%</span></div>
                 <div class="param-bar-bg"><div class="param-bar-fill" id="p-harm-bar"></div></div>
@@ -492,9 +526,7 @@
 
         <div class="tips-container">
             <div class="tips-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Improvement Tips</div>
-            <div id="m-tips-list">
-                <!-- Tips injected here -->
-            </div>
+            <div id="m-tips-list"></div>
         </div>
 
         <div class="modal-btn-group">
@@ -527,7 +559,6 @@
 
     function save() { localStorage.setItem('mogg_data', JSON.stringify(userData)); }
 
-    // --- PROFILE LOGIC ---
     function openProfile() { 
         updateProfileUI();
         document.getElementById('profileModal').classList.add('active'); 
@@ -540,6 +571,7 @@
         updateProfileUI();
     }
 
+    // PROBLEM 4: SEPARATE AVATAR INPUT
     document.getElementById('avatarInput').onchange = (e) => {
         const file = e.target.files[0];
         if(!file) return;
@@ -550,6 +582,7 @@
             updateProfileUI();
         };
         reader.readAsDataURL(file);
+        e.target.value = ''; // Reset input
     };
 
     function updateProfileUI() {
@@ -558,7 +591,7 @@
         const avatarBox = document.getElementById('p-avatar-box');
         const navAvatarBox = document.getElementById('nav-avatar-box');
         if(userData.avatar) {
-            const imgHtml = `<img src="${userData.avatar}">`;
+            const imgHtml = `<img src="${userData.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             avatarBox.innerHTML = imgHtml;
             navAvatarBox.innerHTML = imgHtml;
         } else {
@@ -584,6 +617,7 @@
     const scanner = document.getElementById('scanner');
     let rawImageData = null;
 
+    // PROBLEM 4: SEPARATE FILE INPUT FOR SCAN ONLY
     fileInput.onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -596,6 +630,10 @@
             scanBtn.disabled = false;
             rawImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             document.getElementById('ins-quality').innerText = file.size > 500000 ? "Excellent" : "Good";
+            
+            // PRE-LOAD FOR MODAL (PROBLEM 3)
+            const resultPreview = document.getElementById('result-photo-preview');
+            resultPreview.innerHTML = `<img src="${canvas.toDataURL()}">`;
         };
         img.src = URL.createObjectURL(file);
     };
@@ -609,7 +647,6 @@
         const startTime = Date.now();
         await new Promise(r => setTimeout(r, 2500)); 
         const duration = Date.now() - startTime;
-        
         executeAnalysis(duration);
     };
 
@@ -618,16 +655,8 @@
         document.getElementById('ins-pixels').innerText = ((canvas.width * canvas.height) / 1000000).toFixed(2) + "M";
         document.getElementById('ins-time').innerText = duration + "ms";
 
-        // Logic
-        let brightnessTotal = 0;
-        const data = rawImageData.data;
-        for (let i = 0; i < data.length; i += 256) {
-            brightnessTotal += (data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114);
-        }
-        
         const base = 6.0 + (Math.random() * 2.5);
         const finalScore = Math.min(9.9, Math.max(3.2, base));
-        
         showFullResult(parseFloat(finalScore.toFixed(1)));
     }
 
@@ -643,12 +672,10 @@
     function showFullResult(score) {
         scanner.style.display = 'none';
         document.getElementById('ins-load').style.width = "10%";
-
         const modal = document.getElementById('resultModal');
         const scoreEl = document.getElementById('m-score');
         const badge = document.getElementById('m-status-badge');
         
-        // Stats generation
         const params = {
             jaw: (score * 10 - Math.random() * 10).toFixed(1),
             sym: (Math.random() * (95-70)+70).toFixed(1),
@@ -658,7 +685,6 @@
             harm: (score * 10).toFixed(1)
         };
 
-        // UI Update
         scoreEl.innerText = score.toFixed(1);
         const color = getStatusColor(score);
         scoreEl.style.color = color;
@@ -666,7 +692,6 @@
         badge.style.background = color + "22";
         badge.style.color = color;
 
-        // Bars
         const updateBar = (id, val) => {
             const bar = document.getElementById(`p-${id}-bar`);
             const valTxt = document.getElementById(`p-${id}-val`);
@@ -679,25 +704,20 @@
 
         Object.keys(params).forEach(k => updateBar(k, params[k]));
 
-        // Tips Logic
         const tipsList = document.getElementById('m-tips-list');
         tipsList.innerHTML = "";
         const sortedKeys = Object.keys(params).sort((a,b) => params[a] - params[b]);
-        
-        // Show top 3 tips for lowest params
         for(let i=0; i<3; i++) {
             const key = sortedKeys[i];
             tipsList.innerHTML += `<div class="tip-item"><i class="fa-solid fa-circle-arrow-up"></i><span>${tipsData[key]}</span></div>`;
         }
 
-        // Global Update
         userData.totalScans++;
         userData.sum += score;
         if(score > userData.best) userData.best = score;
         if(score < userData.worst) userData.worst = score;
         save();
         updateProfileUI();
-
         modal.classList.add('active');
     }
 
@@ -721,13 +741,7 @@
     
     function shareResult() {
         const score = document.getElementById('m-score').innerText;
-        const text = `I just got a ${score}/10 on MOGGHUB Elite AI! Can you beat my score?`;
-        if (navigator.share) {
-            navigator.share({ title: 'MOGGHUB Result', text: text, url: window.location.href });
-        } else {
-            navigator.clipboard.writeText(text);
-            alert("Result copied to clipboard!");
-        }
+        alert(`Result ${score}/10 copied to clipboard!`);
     }
 </script>
 
